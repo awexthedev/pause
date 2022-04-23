@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Discord Embeds -->
+    <meta content="Pause my music!" property="og:title" />
+    <meta content="Pause my music! Site contains crude words, don't come here if you don't like bad words" property="og:description" />
+    <meta content="https://pause.thatalex.dev" property="og:url" />
+    <meta content="https://thatalex.dev/static/img/services/spotify-logo.png" property="og:image" />
+    <meta content="#000f54" data-react-helmet="true" name="theme-color" />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Pause! > Alex 👋</title>
+</head>
+<body>
+    <h1>Pause!</h1>
+    <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
+    This will be harshly rate limited, because I like listening to my music sometimes.</p>
+
+        <hr width="80">
+
+    <div id="content">
+        <span style="font-size:50px; text-align:center;" id="contentString"></span>
+        <button onClick="pausePlayer()">Pause Player</button>
+        <span style="font-size:20px;" id="noti"></span>
+    </div>
+
+    <script>
+        async function pausePlayer() {
+            if (document.cookie) {
+                if(!await checkTime(document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1])) {
+                    return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 30 minutes. Please give me time to regain my sanity :)</p>';
+                }
+            }
+
+            const epoch = new Date().getTime();
+            document.cookie = `lastRan=${epoch}`;
+
+            fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
+                method: "get",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(async function(resp) {
+                const response = await resp.json();
+                document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
+            });
+        }
+        
+        async function checkTime(epoch) {
+            console.log(`Running time-since-last-run check..`)
+            var cookie = new Date(epoch * 1);
+            const currentTime = new Date().getTime();
+            var newDateObj = new Date(cookie.getTime() + 30*60000);
+
+            console.log(`Last ran: ${cookie.toLocaleString()}\nExpected end: ${newDateObj.toLocaleString()}`)
+
+            if(newDateObj.getTime() <= currentTime) {
+                console.log("Has been longer than the specified time, generating new timestamp..")
+                document.cookie = `lastRan=${currentTime}`;
+                return true;
+            } else return false;
+        }
+
+        const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
+            const data = await response.json();
+            console.log(data)
+            document.getElementById("contentString").innerHTML = `<p> Currently playing:<br><strong>${data.data.songData.songName}</strong> by <strong>${data.data.songData.artists[0].name}</strong> at <strong>${data.data.device.volume}%</strong> volume.<br>Playing (not paused)? ${data.playing}</p>`;
+        });
+    </script>
+</body>
+</html>
+
+<style>
+    body {
+        background-color: black;
+        color:white;
+        text-align:center;
+    }
+
+    button {
+        color:black;
+    }
+</style>
