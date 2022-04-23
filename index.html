@@ -25,12 +25,17 @@
 
     <div id="content">
         <span style="font-size:50px; text-align:center;" id="contentString"></span>
-        <button onClick="pausePlayer()">Pause Player</button>
+        <input type="text" style="color:black;" id="messageContent" placeholder="Send a message!">
+        <button id="button" type="submit" onClick="pausePlayer()">Pause Player</button>
         <span style="font-size:20px;" id="noti"></span>
     </div>
 
     <script>
         async function pausePlayer() {
+
+            if(document.getElementById("messageContent").value) messageSend()
+            else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
+
             if (document.cookie) {
                 if(!await checkTime(document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1])) {
                     return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 30 minutes. Please give me time to regain my sanity :)</p>';
@@ -61,17 +66,28 @@
 
             if(newDateObj.getTime() <= currentTime) {
                 console.log("Has been longer than the specified time, generating new timestamp..")
-                document.cookie = `lastRan=${currentTime}`;
+                // document.cookie = `lastRan=${currentTime}`;
                 return true;
             } else return false;
         }
 
-        const data = fetch("http://localhost:8098/v0/web/spotify/state").then(async function(response) {
-            const data = await response.json();
-            console.log(data)
+        async function messageSend() {
+            const message = document.getElementById("messageContent").value;
+            const data = await fetch(`https://api.thatalex.dev/v0/web/electron/message?content=${message}`, {
+                "method": "POST"
+            }).then(response => response.json());
 
+            console.log(data);
+        }
+
+        const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
+            const data = await response.json();
             if(data.status != 401) document.getElementById("contentString").innerHTML = `<p> Currently playing:<br><strong>${data.data.songData.songName}</strong> by <strong>${data.data.songData.artists[0].name}</strong> at <strong>${data.data.device.volume}%</strong> volume.<br>Playing (not paused)? ${data.playing}</p>`;
-            else document.getElementById("contentString").innerHTML = `<p style="color:red;">${data.message}</p>`;
+            else { 
+                console.log(`Uh oh! A fucky wucky popped up! >:3`) 
+                document.getElementById("contentString").innerHTML = `<p style="color:red; font-size:25px;">${data.message}</p>`; 
+                document.getElementById("button").style.display = `none`; 
+            }
         });
     </script>
 </body>
