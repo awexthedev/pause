@@ -60,7 +60,7 @@
             console.log(`Running time-since-last-run check..`)
             var cookie = new Date(epoch * 1);
             const currentTime = new Date().getTime();
-            var newDateObj = new Date(cookie.getTime() + 30*60000);
+            var newDateObj = new Date(cookie.getTime() + 5*60000);
 
             console.log(`Last ran: ${cookie.toLocaleString()}\nExpected end: ${newDateObj.toLocaleString()}`)
 
