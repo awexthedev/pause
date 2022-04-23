@@ -66,7 +66,7 @@
 
             if(newDateObj.getTime() <= currentTime) {
                 console.log("Has been longer than the specified time, generating new timestamp..")
-                // document.cookie = `lastRan=${currentTime}`;
+                document.cookie = `lastRan=${currentTime}`;
                 return true;
             } else return false;
         }
