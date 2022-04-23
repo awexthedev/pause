@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Discord Embeds -->
-    <meta content="Pause my music!" property="og:title" />
+    <meta content="Pause my music! - Alex 👋" property="og:title" />
     <meta content="Pause my music! Site contains crude words, don't come here if you don't like bad words" property="og:description" />
     <meta content="https://pause.thatalex.dev" property="og:url" />
     <meta content="https://thatalex.dev/static/img/services/spotify-logo.png" property="og:image" />
@@ -66,10 +66,12 @@
             } else return false;
         }
 
-        const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
+        const data = fetch("http://localhost:8098/v0/web/spotify/state").then(async function(response) {
             const data = await response.json();
             console.log(data)
-            document.getElementById("contentString").innerHTML = `<p> Currently playing:<br><strong>${data.data.songData.songName}</strong> by <strong>${data.data.songData.artists[0].name}</strong> at <strong>${data.data.device.volume}%</strong> volume.<br>Playing (not paused)? ${data.playing}</p>`;
+
+            if(data.status != 401) document.getElementById("contentString").innerHTML = `<p> Currently playing:<br><strong>${data.data.songData.songName}</strong> by <strong>${data.data.songData.artists[0].name}</strong> at <strong>${data.data.device.volume}%</strong> volume.<br>Playing (not paused)? ${data.playing}</p>`;
+            else document.getElementById("contentString").innerHTML = `<p style="color:red;">${data.message}</p>`;
         });
     </script>
 </body>
