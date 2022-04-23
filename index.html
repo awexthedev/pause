@@ -33,13 +33,13 @@
     <script>
         async function pausePlayer() {
 
-            if(document.getElementById("messageContent").value) messageSend()
-            else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
-
             if (document.cookie) {
                 if(!await checkTime(document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1])) {
                     return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 30 minutes. Please give me time to regain my sanity :)</p>';
                 }
+            } else {
+                if(document.getElementById("messageContent").value) messageSend()
+                else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
             }
 
             const epoch = new Date().getTime();
