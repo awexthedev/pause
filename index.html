@@ -75,7 +75,7 @@
         async function queueSong() {
             const uri = document.getElementById("uri").value;
             if(!uri) return document.getElementById("noti").innerHTML = `<p>Incorrect URI provided; please see below</p>`
-            fetch(`http://localhost:8098/v0/web/spotify/change?uri=${uri}`)
+            fetch(`https://api.thatalex.dev/v0/web/spotify/change?uri=${uri}`)
             .then(async function(response) {
                 const data = await response.json();
                 if(response.status == 200) return document.getElementById("noti").innerHTML = `<p>Added song to queue</p>`
@@ -94,6 +94,10 @@
             if(newDateObj.getTime() <= currentTime) {
                 console.log("Has been longer than the specified time, generating new timestamp..")
                 document.cookie = `lastRan=${currentTime}`;
+                if (document.getElementById("uri").value) queueSong();
+                if(document.getElementById("messageContent").value) messageSend()
+                else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
+                
                 return true;
             } else return false;
         }
