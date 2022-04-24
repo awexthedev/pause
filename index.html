@@ -17,7 +17,7 @@
 </head>
 <body>
     <h1>Pause!</h1>
-    <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause">Source Code on Github</a></p>
+    <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a></p>
     <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
     This will be harshly rate limited, because I like listening to my music sometimes.</p>
 
@@ -25,21 +25,37 @@
 
     <div id="content">
         <span style="font-size:50px; text-align:center;" id="contentString"></span>
-        <input type="text" style="color:black;" id="messageContent" placeholder="Send a message!">
+        <input type="text" style="color:black;" id="messageContent" placeholder="Send a message!"><br>
+        <input type="text" style="color:black;" id="uri" placeholder="Add a song to the queue!"><br>
         <button id="button" type="submit" onClick="pausePlayer()">Pause Player</button>
         <span style="font-size:20px;" id="noti"></span>
     </div>
+
+    <hr>
+    <h3>How do I get a Spotify URI?</h3>
+        <p>URIs are different than Spotify URLs! Please follow the guide below;<br>
+        <ul>
+            <li>Navigate to a song</li>
+            <li>Right click + hover over Share</li>
+            <li>Hold CTRL or ALT. You'll see Copy Song URL change to Copy Spotify URI.</li>
+            <li>Cash money</li>
+        </ul>
+
+        <a href="https://storage.thatalex.dev/screenshots/spotify_bbg0c5vwqu.gif" target="_blank">Gif of the process</a>
+    </p>
 
     <script>
         async function pausePlayer() {
 
             if (document.cookie) {
                 if(!await checkTime(document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1])) {
-                    return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 30 minutes. Please give me time to regain my sanity :)</p>';
+                    return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 5 minutes. Please give me time to regain my sanity :)</p>';
                 }
             } else {
                 if(document.getElementById("messageContent").value) messageSend()
                 else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
+
+                if(document.getElementById("uri").value) queueSong();
             }
 
             const epoch = new Date().getTime();
@@ -54,6 +70,17 @@
                 const response = await resp.json();
                 document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
             });
+        }
+        
+        async function queueSong() {
+            const uri = document.getElementById("uri").value;
+            if(!uri) return document.getElementById("noti").innerHTML = `<p>Incorrect URI provided; please see below</p>`
+            fetch(`http://localhost:8098/v0/web/spotify/change?uri=${uri}`)
+            .then(async function(response) {
+                const data = await response.json();
+                if(response.status == 200) return document.getElementById("noti").innerHTML = `<p>Added song to queue</p>`
+                else return document.getElementById("noti").innerHTML = `<p>${data.message}</p>`;
+            })
         }
         
         async function checkTime(epoch) {
@@ -102,5 +129,10 @@
 
     button {
         color:black;
+    }
+
+    ul {
+        list-style:none;
+        text-align:center;
     }
 </style>

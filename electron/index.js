@@ -50,6 +50,8 @@ exp.post('/message', (req, res) => {
    notifier.on('timeout', function (notifierObject, options) {
       console.log("Notification timed out!")
    });
+
+   return res.status(200).json({"status": 200});
 });
 
 exp.listen(3000, () => {
