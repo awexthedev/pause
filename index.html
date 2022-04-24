@@ -105,7 +105,8 @@
             const data = await response.json();
             console.log(data)
             if(data.status != 401) {
-                document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
+                if(data.type == "published") document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
+                else document.getElementById("artistCover").src = `https://thatalex.dev/static/img/services/spotify-logo.png`;
                 document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
                 document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
                 document.getElementById("songUrl").href = `${data.data.songData.url}`;
