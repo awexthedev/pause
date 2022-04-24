@@ -8,6 +8,7 @@ async function skipSong() {
     }
 
     await sendElectronMessage("skip");
+    if(document.getElementById("volumeContent").value) changeVolume();
 
     const data = await fetch(`https://api.thatalex.dev/v0/web/spotify/skip?where=forward`).then(response => response.json());
     if(data.status == 200) return document.getElementById("noti").innerHTML = `<p>Skipped song!</p>`;
@@ -24,6 +25,7 @@ async function skipToPrev() {
     }
 
     sendElectronMessage("skip");
+    if(document.getElementById("volumeContent").value) changeVolume();
 
     const data = await fetch(`https://api.thatalex.dev/v0/web/spotify/skip?where=backward`).then(response => response.json());
     if(data.status == 200) return document.getElementById("noti").innerHTML = `<p>Skipped song!</p>`;

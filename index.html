@@ -35,6 +35,7 @@
         <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
         <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br><br>
 
+        <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
         <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
         <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a></p>
         <hr width="50">
@@ -65,6 +66,7 @@
     <script src="https://pause.thatalex.dev/static/js/skipping.js"></script>
     <script src="https://pause.thatalex.dev/static/js/electron.js"></script>
     <script src="https://pause.thatalex.dev/static/js/checkTime.js"></script>
+    <script src="https://pause.thatalex.dev/static/js/volume.js"></script>
     <script>
         async function checkCookie() {
             if(document.cookie) {
@@ -86,16 +88,17 @@
             }
 
             sendElectronMessage("skip");
+            if(document.getElementById("volumeContent").value) changeVolume();
 
-            fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(async function(resp) {
-                const response = await resp.json();
-                document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
-            });
+            // fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
+            //     method: "get",
+            //     headers: {
+            //         "Content-Type": "application/json"
+            //     }
+            // }).then(async function(resp) {
+            //     const response = await resp.json();
+            //     document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
+            // });
         }
 
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
