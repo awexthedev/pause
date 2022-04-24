@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://pause.thatalex.dev/static/css/modal.css">
+    <link rel="stylesheet" href="https://pause.thatalex.dev/static/css/buttonStyling.css">
     <title>Pause! > Alex 👋</title>
 </head>
 <body>
@@ -26,16 +27,18 @@
         <hr width="80">
 
     <div id="content">
-        <span style="font-size:50px; text-align:center;" id="contentString"></span>
+        <div id="content">
+            <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
+        </div>
+        <hr width="50">
         <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
         <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
-        <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
+        <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br><br>
 
-        <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your pause!"><br>
-        <span style="font-size:20px;" id="noti"></span>
-        <hr width="50px">
-
+        <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
         <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a></p>
+        <hr width="50">
+        <span style="font-size:20px;" id="noti"></span>
     </div>
 
     <div id="modal" class="modal">
@@ -46,7 +49,7 @@
             <h3>Add a song to the queue!</h3>
             <p style="color:maroon;">Please use a Spotify Track URL! URIs are no longer supported.</p>
             <input type="text" style="color:black;" id="uri" placeholder="Spotify Track URL"><br>
-            <input type="text" style="color:black;" id="qMessage" placeholder="Attach a message!"><br><br>
+            <input type="text" style="color:black;" id="qMessage" placeholder="Attach a message!"><br>
           <button type="button" onclick="qASong()">Submit</button><br><br>
     
           <div id="modalNoti"></div>
@@ -54,6 +57,8 @@
         </div>
       
       </div>
+
+      <p>Content is loaded from Spotify. All Rights Reserved to respective artists/labels.</p>
 
     <script src="https://pause.thatalex.dev/static/js/popup.js"></script>
     <script src="https://pause.thatalex.dev/static/js/queue.js"></script>
@@ -95,7 +100,13 @@
 
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
             const data = await response.json();
-            if(data.status != 401) document.getElementById("contentString").innerHTML = `<p> Currently playing:<br><strong>${data.data.songData.songName}</strong> by <strong>${data.data.songData.artists[0].name}</strong> at <strong>${data.data.device.volume}%</strong> volume.<br>Playing (not paused)? ${data.playing}</p>`;
+            console.log(data)
+            if(data.status != 401) {
+                document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
+                document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
+                document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
+                document.getElementById("songUrl").href = `${data.data.songData.url}`;
+            }
             else { 
                 console.log(`Uh oh! A fucky wucky popped up! >:3`) 
                 document.getElementById("contentString").innerHTML = `<p style="color:red; font-size:25px;">${data.message}</p>`; 
