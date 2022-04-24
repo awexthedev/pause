@@ -13,6 +13,8 @@
     <meta content="#000f54" data-react-helmet="true" name="theme-color" />
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/modal.css">
     <title>Pause! > Alex 👋</title>
 </head>
 <body>
@@ -25,11 +27,34 @@
 
     <div id="content">
         <span style="font-size:50px; text-align:center;" id="contentString"></span>
-        <input type="text" style="color:black;" id="messageContent" placeholder="Send a message!"><br>
-        <input type="text" style="color:black;" id="uri" placeholder="Add a song to the queue!"><br>
-        <button id="button" type="submit" onClick="pausePlayer()">Pause Player</button>
+        <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
+        <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
+        <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
+
+        <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your pause!"><br>
         <span style="font-size:20px;" id="noti"></span>
+        <hr width="50px">
+
+        <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a></p>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span><br>
+    
+        <div style="text-align:center;">
+            <h3>Add a song to the queue!</h3>
+            <p style="color:maroon;">PLEASE NOTE! You need to provide a Spotify URI! Not a URL! The server will reject your suggestion if it is not properly formatted.<br>
+            Please see the bottom of the website for more information on how to get this.</p>
+            <input type="text" style="color:black;" id="uri" placeholder="Add a song to the queue!"><br>
+            <input type="text" style="color:black;" id="qMessage" placeholder="Attach a message!"><br><br>
+          <button type="button" onclick="qASong()">Submit</button><br><br>
+    
+          <div id="modalNoti"></div>
+        </div>
+        </div>
+      
+      </div>
 
     <hr>
     <h3>How do I get a Spotify URI?</h3>
@@ -44,22 +69,32 @@
         <a href="https://storage.thatalex.dev/screenshots/spotify_bbg0c5vwqu.gif" target="_blank">Gif of the process</a>
     </p>
 
+    <script src="static/js/popup.js"></script>
+    <script src="static/js/queue.js"></script>
+    <script src="static/js/skipping.js"></script>
+    <script src="static/js/electron.js"></script>
+    <script src="static/js/checkTime.js"></script>
     <script>
-        async function pausePlayer() {
+        async function checkCookie() {
+            if(document.cookie) {
+                const cookie = document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1];
+                const time = await checkTime(cookie);
+                console.log(time)
+                if(time) return true;
+                else return false;
+            } else return true;
+        }
+        
+        async function pauseSong() {
+            const message = document.getElementById("messageContent").value;
+            if(!message) return document.getElementById("noti").innerHTML = `<p>At least send me a message before you rick roll me :(</p>`;
 
-            if (document.cookie) {
-                if(!await checkTime(document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1])) {
-                    return document.getElementById('noti').innerHTML = '<p>You have already paused the player in the last 5 minutes. Please give me time to regain my sanity :)</p>';
-                }
-            } else {
-                if(document.getElementById("messageContent").value) messageSend()
-                else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
-
-                if(document.getElementById("uri").value) queueSong();
+            if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
+            else if (!await checkCookie()) {
+                return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
             }
 
-            const epoch = new Date().getTime();
-            document.cookie = `lastRan=${epoch}`;
+            sendElectronMessage("skip");
 
             fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
                 method: "get",
@@ -70,45 +105,6 @@
                 const response = await resp.json();
                 document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
             });
-        }
-        
-        async function queueSong() {
-            const uri = document.getElementById("uri").value;
-            if(!uri) return document.getElementById("noti").innerHTML = `<p>Incorrect URI provided; please see below</p>`
-            fetch(`https://api.thatalex.dev/v0/web/spotify/change?uri=${uri}`)
-            .then(async function(response) {
-                const data = await response.json();
-                if(response.status == 200) return document.getElementById("noti").innerHTML = `<p>Added song to queue</p>`
-                else return document.getElementById("noti").innerHTML = `<p>${data.message}</p>`;
-            })
-        }
-        
-        async function checkTime(epoch) {
-            console.log(`Running time-since-last-run check..`)
-            var cookie = new Date(epoch * 1);
-            const currentTime = new Date().getTime();
-            var newDateObj = new Date(cookie.getTime() + 5*60000);
-
-            console.log(`Last ran: ${cookie.toLocaleString()}\nExpected end: ${newDateObj.toLocaleString()}`)
-
-            if(newDateObj.getTime() <= currentTime) {
-                console.log("Has been longer than the specified time, generating new timestamp..")
-                document.cookie = `lastRan=${currentTime}`;
-                if (document.getElementById("uri").value) queueSong();
-                if(document.getElementById("messageContent").value) messageSend()
-                else return document.getElementById("noti").innerHTML = `<p>At least provide me a message, wtf</p>`
-                
-                return true;
-            } else return false;
-        }
-
-        async function messageSend() {
-            const message = document.getElementById("messageContent").value;
-            const data = await fetch(`https://api.thatalex.dev/v0/web/electron/message?content=${message}`, {
-                "method": "POST"
-            }).then(response => response.json());
-
-            console.log(data);
         }
 
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
