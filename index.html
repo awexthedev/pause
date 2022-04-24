@@ -90,15 +90,15 @@
             sendElectronMessage("skip");
             if(document.getElementById("volumeContent").value) changeVolume();
 
-            // fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
-            //     method: "get",
-            //     headers: {
-            //         "Content-Type": "application/json"
-            //     }
-            // }).then(async function(resp) {
-            //     const response = await resp.json();
-            //     document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
-            // });
+            fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
+                method: "get",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(async function(resp) {
+                const response = await resp.json();
+                document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
+            });
         }
 
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
