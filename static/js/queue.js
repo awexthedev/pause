@@ -2,6 +2,8 @@ async function qASong() {
     const uri = document.getElementById("uri").value;
     if(!uri) return document.getElementById("modalNoti").innerHTML = `<p>Please enter a valid song link</p>`;
 
+    if(!uri.includes("open.spotify.com/track")) return document.getElementById("modalNoti").innerHTML = `<p>Please provide a valid Spotify song URL</p>`;
+
     const pog = await sendElectronMessage("q");
 
     if(pog == true) {
