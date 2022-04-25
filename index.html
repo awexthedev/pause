@@ -22,7 +22,7 @@
     <h1>Pause!</h1>
     <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a><br>
     <!-- <a href="/queue">Queue</a> --></p>
-    <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
+    <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br><br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
     This will be harshly rate limited, because I like listening to my music sometimes.</p>
 
         <hr width="80">
@@ -33,15 +33,18 @@
             <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5" target="_blank">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
         </div>
         <hr width="50">
-        <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
-        <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
-        <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br><br>
 
-        <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
-        <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
-        <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a> <!-- -- <a href="/queue">See the queue</a> --></p>
-        <hr width="50">
-        <span style="font-size:20px;" id="noti"></span>
+        <div id="buttons">
+            <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
+            <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
+            <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br><br>
+    
+            <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
+            <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
+            <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a> <!-- -- <a href="/queue">See the queue</a> --></p>
+            <hr width="50">
+            <span style="font-size:20px;" id="noti"></span>
+        </div>
     </div>
 
     <div id="modal" class="modal">
@@ -61,7 +64,7 @@
       
       </div>
 
-      <p>Content is loaded from Spotify. All Rights Reserved to respective artists/labels.</p>
+      <p>Content is loaded from Spotify.<br>All Rights Reserved to respective artists/labels.</p>
 
     <script src="https://pause.thatalex.dev/static/js/popup.js"></script>
     <script src="https://pause.thatalex.dev/static/js/queue.js"></script>
@@ -79,21 +82,37 @@
     gtag('config', 'G-1EF9H5MP4S');
     </script>
     <script>
+        if(1920 > screen.width) {
+            console.log(`User is on mobile, adjusting size of inputs`)
+            document.getElementById("volumeContent").style = `width:50%; color:black;`; 
+            document.getElementById("messageContent").style = `width:50%; color:black;`; 
+            document.getElementById("uri").style = `width:50%; color:black;`; 
+            document.getElementById("qMessage").style = `width:50%; color:black;`; 
+        }
+
+        // Fetch the queue and cookie check function
         fetchQueue()
         async function checkCookie() {
             if(document.cookie) {
                 const cookie = document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1];
                 const time = await checkTime(cookie);
-                console.log(time)
                 if(time) return true;
                 else return false;
             } else return true;
         }
 
+        // Initial state fetch from API
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
             const data = await response.json();
             console.log(`Received API State Response`, data)
-            if(data.status != 401) {
+
+            if(data.status == 400) {
+                console.log(`Received 400 BAD REQUEST error, 204 NO CONTENT returned on backend`);
+                document.getElementById("songData").innerText = `I am not currently playing anything! LLLLL`
+                document.getElementById("buttons").style.display = `none`;
+                document.getElementById("songUrl").href = "https://last.fm/user/lulawex";
+            } else if(data.status != 401) {
+                console.log(`API response validated, formatting and displaying.`)
                 if(data.type == "published") {
                     document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
                     document.getElementById("songUrl").href = `${data.data.songData.url}`;
@@ -107,8 +126,7 @@
                 }
                 document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
                 document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
-            }
-            else { 
+            } else { 
                 console.log(`Uh oh! A fucky wucky popped up! >:3`) 
                 document.getElementById("contentString").innerHTML = `<p style="color:red; font-size:25px;">${data.message}</p>`; 
                 document.getElementById("button").style.display = `none`; 
