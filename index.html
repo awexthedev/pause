@@ -63,7 +63,7 @@
 
     <script src="https://pause.thatalex.dev/static/js/popup.js"></script>
     <script src="https://pause.thatalex.dev/static/js/queue.js"></script>
-    <script src="https://pause.thatalex.dev/static/js/skipping.js"></script>
+    <script src="https://pause.thatalex.dev/static/js/playerControls.js"></script>
     <script src="https://pause.thatalex.dev/static/js/electron.js"></script>
     <script src="https://pause.thatalex.dev/static/js/checkTime.js"></script>
     <script src="https://pause.thatalex.dev/static/js/volume.js"></script>
@@ -77,39 +77,24 @@
                 else return false;
             } else return true;
         }
-        
-        async function pauseSong() {
-            const message = document.getElementById("messageContent").value;
-            if(!message) return document.getElementById("noti").innerHTML = `<p>At least send me a message before you rick roll me :(</p>`;
-
-            if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-            else if (!await checkCookie()) {
-                return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
-            }
-
-            sendElectronMessage("skip");
-            if(document.getElementById("volumeContent").value) changeVolume();
-
-            fetch("https://api.thatalex.dev/v0/web/spotify/pause", {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(async function(resp) {
-                const response = await resp.json();
-                document.getElementById("noti").innerHTML = `<p>${response.message}</p>`;
-            });
-        }
 
         const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
             const data = await response.json();
-            console.log(data)
+            console.log(`Received API State Response`, data)
             if(data.status != 401) {
-                if(data.type == "published") document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
-                else document.getElementById("artistCover").src = `https://thatalex.dev/static/img/services/spotify-logo.png`;
+                if(data.type == "published") {
+                    document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
+                    document.getElementById("songUrl").href = `${data.data.songData.url}`;
+                } else if (data.type == "local") {
+                    document.getElementById("artistCover").src = `https://thatalex.dev/static/img/services/spotify-logo.png`;
+                    document.getElementById("songUrl").href = `https://youtube.com/results?search_query=${data.data.songData.songName.replace(" ", "+")}+by+${data.data.songData.artists[0].name.replace(" ", "+")}`
+                }
+                if(data.playing == false) {
+                    document.getElementById("playPause").className = `fa fa-play`;
+                    document.getElementById("playPause").onclick = playSong
+                }
                 document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
                 document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
-                document.getElementById("songUrl").href = `${data.data.songData.url}`;
             }
             else { 
                 console.log(`Uh oh! A fucky wucky popped up! >:3`) 
