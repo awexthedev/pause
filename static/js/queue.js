@@ -16,3 +16,17 @@ async function qASong() {
         })
     }
 }
+
+async function fetchQueue() {
+    const d = await fetch("https://api.thatalex.dev/v0/web/spotify/queue")
+    if(d.status != 204) {
+        dj = await d.json();
+
+        // divs
+        const artistName = document.getElementById("upNextArtist");
+        const songName = document.getElementById("upNextName");
+
+        artistName.innerText = `${dj.items[0].artistName}`;
+        songName.innerText = `${dj.items[0].songName}`;
+    } else if (d.status == 204) document.getElementById("upNext").innerHTML = `Up next: No songs are queued! <a onclick="openQueueModal()" href="#">Queue a song!</a>`;
+}

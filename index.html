@@ -20,7 +20,8 @@
 </head>
 <body>
     <h1>Pause!</h1>
-    <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a></p>
+    <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a><br>
+    <!-- <a href="/queue">Queue</a> --></p>
     <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
     This will be harshly rate limited, because I like listening to my music sometimes.</p>
 
@@ -29,6 +30,7 @@
     <div id="content">
         <div id="content">
             <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
+            <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
         </div>
         <hr width="50">
         <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
@@ -37,7 +39,7 @@
 
         <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
         <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
-        <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a></p>
+        <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a> <!-- -- <a href="/queue">See the queue</a> --></p>
         <hr width="50">
         <span style="font-size:20px;" id="noti"></span>
     </div>
@@ -68,6 +70,7 @@
     <script src="https://pause.thatalex.dev/static/js/checkTime.js"></script>
     <script src="https://pause.thatalex.dev/static/js/volume.js"></script>
     <script>
+        fetchQueue()
         async function checkCookie() {
             if(document.cookie) {
                 const cookie = document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1];
