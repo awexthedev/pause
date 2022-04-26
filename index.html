@@ -92,7 +92,7 @@
         }
 
         // Initial state fetch from API
-        const data = fetch("http://localhost:8098/v0/web/spotify/player/state").then(async function(response) {
+        const data = fetch("https://api.thatalex.dev/v0/web/spotify/player/state").then(async function(response) {
             const data = await response.json();
 
             if (data.status == 400) {
