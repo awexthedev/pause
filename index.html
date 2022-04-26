@@ -37,7 +37,9 @@
         <div id="buttons">
             <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
             <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
-            <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br><br>
+            <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
+
+            <i class="fa fa-check" onclick="changeVolume()" style="font-size:25px; padding-top:10px;" aria-hidden="true"></i><br><br>
     
             <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
             <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br>
@@ -102,7 +104,7 @@
         }
 
         // Initial state fetch from API
-        const data = fetch("https://api.thatalex.dev/v0/web/spotify/state").then(async function(response) {
+        const data = fetch("https://api.thatalex.dev/v0/web/spotify/player/state").then(async function(response) {
             const data = await response.json();
             console.log(`Received API State Response`, data)
 
