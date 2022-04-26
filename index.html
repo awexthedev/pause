@@ -32,7 +32,6 @@
             <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
             <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5" target="_blank">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
         </div>
-        <hr width="50">
 
         <div id="buttons">
             <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
@@ -92,29 +91,22 @@
             document.getElementById("qMessage").style = `width:50%; color:black;`; 
         }
 
-        // Fetch the queue and cookie check function
-        fetchQueue()
-        async function checkCookie() {
-            if(document.cookie) {
-                const cookie = document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1];
-                const time = await checkTime(cookie);
-                if(time) return true;
-                else return false;
-            } else return true;
-        }
-
         // Initial state fetch from API
-        const data = fetch("https://api.thatalex.dev/v0/web/spotify/player/state").then(async function(response) {
+        const data = fetch("http://localhost:8098/v0/web/spotify/player/state").then(async function(response) {
             const data = await response.json();
-            console.log(`Received API State Response`, data)
 
-            if(data.status == 400) {
-                console.log(`Received 400 BAD REQUEST error, 204 NO CONTENT returned on backend`);
+            if (data.status == 400) {
+                console.log(`Received 400 BAD REQUEST error, 204 NO CONTENT returned on backend\n${JSON.stringify(data)}`);
                 document.getElementById("songData").innerText = `I am not currently playing anything! LLLLL`
                 document.getElementById("buttons").style.display = `none`;
                 document.getElementById("songUrl").href = "https://last.fm/user/lulawex";
-            } else if(data.status != 401) {
-                console.log(`API response validated, formatting and displaying.`)
+            } else if (data.status == 401) {
+                console.log("Backend returned 401 Unauthorized on state API. Client is unauthed.\n" + JSON.stringify(data));
+                document.getElementById("content").innerHTML = `<h3 style="color:red">${data.message}</h3>`;
+            } else if (data.status == 200) {
+                console.log(`API Response properly received & validated. Fetching queue..`);
+                fetchQueue();
+
                 if(data.type == "published") {
                     document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
                     document.getElementById("songUrl").href = `${data.data.songData.url}`;
@@ -122,14 +114,15 @@
                     document.getElementById("artistCover").src = `https://thatalex.dev/static/img/services/spotify-logo.png`;
                     document.getElementById("songUrl").href = `https://youtube.com/results?search_query=${data.data.songData.songName.replace(" ", "+")}+by+${data.data.songData.artists[0].name.replace(" ", "+")}`
                 }
-                if(data.playing == false) {
+
+                if (data.playing == false) {
                     document.getElementById("playPause").className = `fa fa-play`;
                     document.getElementById("playPause").onclick = playSong
                 }
                 document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
                 document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
-            } else { 
-                console.log(`Uh oh! A fucky wucky popped up! >:3`) 
+            } else {
+                console.log(`Uh oh! A fucky wucky popped up! >:3\n${JSON.stringify(data)}`); 
                 document.getElementById("contentString").innerHTML = `<p style="color:red; font-size:25px;">${data.message}</p>`; 
                 document.getElementById("button").style.display = `none`; 
             }

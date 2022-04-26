@@ -12,3 +12,12 @@ async function checkTime(epoch) {
         return true;
     } else return false;
 }
+
+async function checkCookie() {
+    if(document.cookie) {
+        const cookie = document.cookie.split('; ').find(row => row.startsWith('lastRan=')).split('=')[1];
+        const time = await checkTime(cookie);
+        if(time) return true;
+        else return false;
+    } else return true;
+}
