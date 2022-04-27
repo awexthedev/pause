@@ -30,6 +30,12 @@
     <div id="content">
         <div id="content">
             <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
+
+            <noscript>
+                <h3 style="color:red;">You have JavaScript disabled in your browser.</h3>
+                    <p>This app cannot run if you do not have JavaScript enabled. Please use a JavaScript-supported browser.<br>To learn more, please see <a href="https://www.enable-javascript.com/" target="_blank">here.</a></p>
+            </noscript>
+
             <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5" target="_blank">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
         </div>
 
@@ -66,6 +72,7 @@
       </div>
 
       <p>Content is loaded from Spotify.<br>All Rights Reserved to respective artists/labels.</p>
+      <div id="git"></div>
 
     <script src="https://pause.thatalex.dev/static/js/popup.js"></script>
     <script src="https://pause.thatalex.dev/static/js/queue.js"></script>
@@ -83,6 +90,14 @@
     gtag('config', 'G-1EF9H5MP4S');
     </script>
     <script>
+        // Fetching latest deployment ID for troubleshooting
+        fetch("https://api.github.com/repos/awexthedev/pause/deployments")
+        .then(async function(response) {
+            const d = await response.json();
+            console.log(`Response from GitHub API received, displaying latest deploy`);
+            document.getElementById("git").innerHTML = `<p>Deployment ID: <a href="https://github.com/awexthedev/pause/commit/${d[0].sha}" target="_blank">${d[0].id}</a><br>Time of deployment: ${d[0].created_at}</p>`;
+        })
+
         if(1920 > screen.width) {
             console.log(`User is on mobile, adjusting size of inputs`)
             document.getElementById("volumeContent").style = `width:50%; color:black;`; 
