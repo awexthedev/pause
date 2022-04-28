@@ -43,6 +43,7 @@
         <div id="content">
             <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
 
+            <div id="contentString"></div>
             <noscript>
                 <h3 style="color:red;">You have JavaScript disabled in your browser.</h3>
                     <p>This app cannot run if you do not have JavaScript enabled. Please use a JavaScript-supported browser.<br>To learn more, please see <a href="https://www.enable-javascript.com/" target="_blank">here.</a></p>
@@ -119,7 +120,7 @@
         }
 
         // Initial state fetch from API
-        const data = fetch("https://api.thatalex.dev/v0/web/spotify/player/state").then(async function(response) {
+        const data = fetch("http://localhost:8098/v0/web/spotify/player/state").then(async function(response) {
             const data = await response.json();
 
             if (data.status == 400) {
@@ -128,8 +129,11 @@
                 document.getElementById("buttons").style.display = `none`;
                 document.getElementById("songUrl").href = "https://last.fm/user/lulawex";
             } else if (data.status == 401) {
-                console.log("Backend returned 401 Unauthorized on state API. Client is unauthed.\n" + JSON.stringify(data));
-                document.getElementById("content").innerHTML = `<h3 style="color:red">${data.message}</h3>`;
+                if (data.message == "Access Token was invalid. Token was refreshed & next request should succeed.") {
+                    location.reload();
+                } else if (data.message == "Access Token is invalid. A refresh was attempted, however failed to succeed" || data.message == "Access Token is invalid. A refresh was attempted, but refresh_token is missing in memory.") {
+                    document.getElementById("contentString").innerHTML = `<h3 style="color:red">API failed to properly validate!</h3>`;
+                } else document.getElementById("contentString").innerHTML = `<h3 style="color:red">${data.message}</h3>`;
             } else if (data.status == 200) {
                 console.log(`API Response properly received & validated. Fetching queue..`);
                 fetchQueue();
