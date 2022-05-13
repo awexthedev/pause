@@ -3,8 +3,6 @@ const myParam = urlParams.get('trident');
 
 // Skipping x Reversing
 async function skipSong() {
-    const message = document.getElementById("messageContent").value;
-
     if (!myParam || myParam != "fuckyou") {
         if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
         else if (!await checkCookie()) {
@@ -21,8 +19,6 @@ async function skipSong() {
 }
 
 async function skipToPrev() {
-    const message = document.getElementById("messageContent").value;
-
     if (!myParam || myParam != "fuckyou") {
         if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
         else if (!await checkCookie()) {
@@ -41,8 +37,6 @@ async function skipToPrev() {
 // Play x Pause
 
 async function pauseSong() {
-    const message = document.getElementById("messageContent").value;
-
     if (!myParam || myParam != "fuckyou") {
         if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
         else if (!await checkCookie()) {
@@ -72,8 +66,6 @@ async function pauseSong() {
 }
 
 async function playSong() {
-    const message = document.getElementById("messageContent").value;
-
     if (!myParam || myParam != "fuckyou") {
         if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
         else if (!await checkCookie()) {
