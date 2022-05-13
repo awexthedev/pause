@@ -34,7 +34,7 @@
     <h1>Pause!</h1>
     <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a><br>
     <!-- <a href="/queue">Queue</a> --></p>
-    <p style ="font-size:30px;">Ever wanted to fuck with someones music? Well, now you can fuck with mine!<br><br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
+    <p style ="font-size:30px;" id="msg">Ever wanted to fuck with someones music? Well, now you can fuck mine!<br><br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
     This will be harshly rate limited, because I like listening to my music sometimes.</p>
 
         <hr width="80">
@@ -103,6 +103,11 @@
     gtag('config', 'G-XCS1ZHK3ZM');
     </script>
     <script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('trident');
+        if(myParam == 'fuckyou') document.getElementById("msg").innerText="Ever wanted to fuck? Well, now you can fuck me!"
+
         // Fetching latest deployment ID for troubleshooting
         fetch("https://api.github.com/repos/awexthedev/pause/deployments")
         .then(async function(response) {
