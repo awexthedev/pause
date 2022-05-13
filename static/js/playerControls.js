@@ -1,10 +1,15 @@
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('trident');
+
 // Skipping x Reversing
 async function skipSong() {
     const message = document.getElementById("messageContent").value;
 
-    if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-    else if (!await checkCookie()) {
-        return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+    if (!myParam || myParam != "fuckyou") {
+        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
+        else if (!await checkCookie()) {
+            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+        }
     }
 
     if (message) await sendElectronMessage("skip");
@@ -18,9 +23,11 @@ async function skipSong() {
 async function skipToPrev() {
     const message = document.getElementById("messageContent").value;
 
-    if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-    else if (!await checkCookie()) {
-        return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+    if (!myParam || myParam != "fuckyou") {
+        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
+        else if (!await checkCookie()) {
+            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+        }
     }
 
     if (message) await sendElectronMessage("skip");
@@ -36,9 +43,11 @@ async function skipToPrev() {
 async function pauseSong() {
     const message = document.getElementById("messageContent").value;
 
-    if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-    else if (!await checkCookie()) {
-        return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+    if (!myParam || myParam != "fuckyou") {
+        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
+        else if (!await checkCookie()) {
+            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+        }
     }
 
     if (message) await sendElectronMessage("skip");
@@ -65,9 +74,11 @@ async function pauseSong() {
 async function playSong() {
     const message = document.getElementById("messageContent").value;
 
-    if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-    else if (!await checkCookie()) {
-        return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+    if (!myParam || myParam != "fuckyou") {
+        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
+        else if (!await checkCookie()) {
+            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+        }
     }
 
     if (message) await sendElectronMessage("skip");
