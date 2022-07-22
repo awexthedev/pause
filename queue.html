@@ -1,0 +1,68 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Discord Embeds -->
+    <meta content="Pause my music! - Alex 👋" property="og:title" />
+    <meta content="Pause my music! No, seriously. You can pause, skip, and even queue songs to my playlist! Cool, right?" property="og:description" />
+    <meta content="https://pause.thatalex.dev" property="og:url" />
+    <meta content="#000f54" data-react-helmet="true" name="theme-color" />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/modal.css">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="stylesheet" href="static/css/buttonStyling.css">
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-TKGC8X6');</script>
+        <!-- End Google Tag Manager -->
+    <title>Pause! > Alex 👋</title>
+</head>
+<body>
+    <noscript>
+        <h3 style="color:red;">You have JavaScript disabled in your browser.</h3>
+            <p>This app cannot run properly if you do not have JavaScript enabled. Please use a JavaScript-supported browser.<br>To learn more, please see <a href="https://www.enable-javascript.com/" target="_blank">here.</a></p>
+    </noscript>
+
+    <h1><a href="/">Pause!</a></h1>
+    <p style="font-size:15px;"><a href="https://github.com/zevhr/pause" target="_blank">Source Code on Github</a><br>
+    <a href="#">Queue</a> </p>
+    <p style ="font-size:30px;" id="msg">Ever wanted to mess with someones music? Well, that's what this is for.</p>
+        <hr width="50%">
+    
+    <div id="container">
+        <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5" target="_blank">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
+        <button type="button" onclick="openQueueModal()">Queue a song</button>
+        <hr width="50%">
+        <div id="latest">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3N8jIVRnoc6aZQWdU3LpLK?utm_source=generator" width="50%" height="380" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span><br>
+    
+            <div style="text-align:center">
+                <h3>Queue a song!</h3>
+                <input type="text" style="color:black;" id="uri" placeholder="Spotify Track URL"><br>
+                <button type="button" id="qSubmit" onclick="qASong()">Submit</button><br><br>
+                <div id="modalNoti"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/js/msgTools.js"></script>
+    <script src="static/js/queue.js"></script>
+    <script src="static/js/popup.js"></script>
+</body>
+</html>

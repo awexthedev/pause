@@ -7,15 +7,15 @@
 
     <!-- Discord Embeds -->
     <meta content="Pause my music! - Alex 👋" property="og:title" />
-    <meta content="Pause my music! Site contains crude words, don't come here if you don't like bad words" property="og:description" />
+    <meta content="Pause my music! No, seriously. You can pause, skip, and even queue songs to my playlist! Cool, right?" property="og:description" />
     <meta content="https://pause.thatalex.dev" property="og:url" />
-    <meta content="https://thatalex.dev/static/img/services/spotify-logo.png" property="og:image" />
     <meta content="#000f54" data-react-helmet="true" name="theme-color" />
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://pause.thatalex.dev/static/css/modal.css">
-    <link rel="stylesheet" href="https://pause.thatalex.dev/static/css/buttonStyling.css">
+    <link rel="stylesheet" href="static/css/modal.css">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="stylesheet" href="static/css/buttonStyling.css">
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -26,160 +26,59 @@
     <title>Pause! > Alex 👋</title>
 </head>
 <body>
+    <noscript>
+        <h3 style="color:red;">You have JavaScript disabled in your browser.</h3>
+            <p>This app cannot run properly if you do not have JavaScript enabled. Please use a JavaScript-supported browser.<br>To learn more, please see <a href="https://www.enable-javascript.com/" target="_blank">here.</a></p>
+    </noscript>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TKGC8X6"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
     <h1>Pause!</h1>
-    <p style="font-size:15px;"><a href="https://github.com/awexthedev/pause" target="_blank">Source Code on Github</a><br>
-    <!-- <a href="/queue">Queue</a> --></p>
-    <p style ="font-size:30px;" id="msg">Ever wanted to fuck with someones music? Well, now you can fuck mine!<br><br>I'm paying for this premium plan, and in turn, this gives me access to premium API routes to control my player.<br>
-    This will be harshly rate limited, because I like listening to my music sometimes.</p>
-
-        <hr width="80">
-
-    <div id="content">
-        <div id="content">
-            <img width="250" id="artistCover"><br><a id="songUrl" target="_blank"><h3 id="songData"></h3></a><p id="volume"></p>
-
-            <div id="contentString"></div>
-            <noscript>
-                <h3 style="color:red;">You have JavaScript disabled in your browser.</h3>
-                    <p>This app cannot run if you do not have JavaScript enabled. Please use a JavaScript-supported browser.<br>To learn more, please see <a href="https://www.enable-javascript.com/" target="_blank">here.</a></p>
-            </noscript>
-
-            <p id="upNext"><a href="https://open.spotify.com/playlist/3N8jIVRnoc6aZQWdU3LpLK?si=4e1330744aad44e5" target="_blank">Up next: <span id="upNextName"></span> by <span id="upNextArtist"></span></a></p>
+    <p style="font-size:15px;"><a href="https://github.com/zevhr/pause" target="_blank">Source Code on Github</a><br>
+    <a href="/queue">Queue</a> </p>
+    <p style ="font-size:30px;" id="msg">Ever wanted to mess with someones music? Well, that's what this is for.<br>
+    <span style="font-size:15px;">This site uses cookies to prevent spamming of my client :d</span></p>
+        <hr width="50%">
+    <div id="container">
+        <div id="player">
+            <img class="cover"></div>
+            <div class="author"></div>
         </div>
 
-        <div id="buttons">
-            <i id="backward" onclick="skipToPrev()" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
-            <i id="playPause" onclick="pauseSong()" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
-            <i id="forward" onclick="skipSong()" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
-
-            <i class="fa fa-check" onclick="changeVolume()" style="font-size:25px; padding-top:10px;" aria-hidden="true"></i><br><br>
-    
-            <input type="number" style="width:20%; color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
-            <!-- <input type="text" style="width:20%; color:black;" id="messageContent" placeholder="Attach a message w/ your action!"><br> -->
-            <p><a style="color:white;" onclick="openQueueModal()" href="#">Queue a song</a> <!-- -- <a href="/queue">See the queue</a> --></p>
-            <hr width="50">
-            <span style="font-size:20px;" id="noti"></span>
+        <div id="controller">
+            <div id="buttons">
+                <i id="backward" onclick="playerControls('skipBackward', null, this)" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
+                <i id="playPause" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
+                <i id="forward" onclick="playerControls('skipForward', null, this)" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
+                <br>
+                <input type="text" style="color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br>
+                <i class="fa fa-check" onclick="playerControls('volume', document.getElementById('volumeContent').value, this)" style="font-size:25px; padding-top:10px;" aria-hidden="true"></i><br>
+                <span style="font-size:20px;" id="notification"></span>
+                <hr width="50">
+            </div>
         </div>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span><br>
-    
-        <div style="text-align:center;">
-            <h3>Add a song to the queue!</h3>
-            <p style="color:maroon;">Please use a Spotify Track URL! URIs are no longer supported.</p>
-            <input type="text" style="color:black;" id="uri" placeholder="Spotify Track URL"><br>
-            <!-- <input type="text" style="color:black;" id="qMessage" placeholder="Attach a message!"><br> -->
-          <button type="button" id="qSubmit" onclick="qASong()">Submit</button><br><br>
-    
-          <div id="modalNoti"></div>
-        </div>
-        </div>
-      
-      </div>
+    <p>Content is loaded from Spotify.<br>All Rights Reserved to respective artists/labels.</p>
 
-      <p>Content is loaded from Spotify.<br>All Rights Reserved to respective artists/labels.</p>
-      <div id="git"></div>
-
-    <script src="https://pause.thatalex.dev/static/js/popup.js"></script>
-    <script src="https://pause.thatalex.dev/static/js/queue.js"></script>
-    <script src="https://pause.thatalex.dev/static/js/playerControls.js"></script>
-    <script src="https://pause.thatalex.dev/static/js/electron.js"></script>
-    <script src="https://pause.thatalex.dev/static/js/checkTime.js"></script>
-    
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="static/js/popup.js"></script>
+    <script src="static/js/playerControls.js"></script>
+    <script src="static/js/msgTools.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XCS1ZHK3ZM"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-    gtag('config', 'G-XCS1ZHK3ZM');
+        gtag('config', 'G-XCS1ZHK3ZM');
     </script>
     <script>
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const myParam = urlParams.get('trident');
-        if(myParam == 'fuckyou') document.getElementById("msg").innerText="Ever wanted to fuck? Well, now you can fuck me!"
-
-        // Fetching latest deployment ID for troubleshooting
-        fetch("https://api.github.com/repos/awexthedev/pause/deployments")
-        .then(async function(response) {
-            const d = await response.json();
-            console.log(`Response from GitHub API received, displaying latest deploy`);
-            document.getElementById("git").innerHTML = `<p>Deployment ID: <a href="https://github.com/awexthedev/pause/commit/${d[0].sha}" target="_blank">${d[0].id}</a><br>Time of deployment: ${d[0].created_at}</p>`;
-        })
-
-        if(1920 > screen.width) {
-            console.log(`User is on mobile, adjusting size of inputs`)
-            document.getElementById("volumeContent").style = `width:50%; color:black;`; 
-            document.getElementById("messageContent").style = `width:50%; color:black;`; 
-            document.getElementById("uri").style = `width:50%; color:black;`; 
-            document.getElementById("qMessage").style = `width:50%; color:black;`; 
+        if (window.innerHeight < 720 || window.innerWidth < 1280) {
+            document.getElementById("volumeContent").style.width = "50%";
         }
-
-        // Initial state fetch from API
-        const data = fetch("https://api.thatalex.dev/v0/web/spotify/player/state").then(async function(response) {
-            const data = await response.json();
-
-            if (data.status == 400) {
-                console.log(`Received 400 BAD REQUEST error, 204 NO CONTENT returned on backend\n${JSON.stringify(data)}`);
-                document.getElementById("songData").innerText = `I am not currently playing anything! LLLLL`
-                document.getElementById("buttons").style.display = `none`;
-                document.getElementById("songUrl").href = "https://last.fm/user/lulawex";
-            } else if (data.status == 401) {
-                if (data.message == "Access Token was invalid. Token was refreshed & next request should succeed.") {
-                    location.reload();
-                } else if (data.message == "Access Token is invalid. A refresh was attempted, however failed to succeed" || data.message == "Access Token is invalid. A refresh was attempted, but refresh_token is missing in memory.") {
-                    document.getElementById("contentString").innerHTML = `<h3 style="color:red">API failed to properly validate!</h3>`;
-                } else document.getElementById("contentString").innerHTML = `<h3 style="color:red">${data.message}</h3>`;
-            } else if (data.status == 200) {
-                console.log(`API Response properly received & validated. Fetching queue..`);
-                fetchQueue();
-
-                if(data.type == "published") {
-                    document.getElementById("artistCover").src = `${data.data.songData.album.images[0].url}`;
-                    document.getElementById("songUrl").href = `${data.data.songData.url}`;
-                } else if (data.type == "local") {
-                    document.getElementById("artistCover").src = `https://thatalex.dev/static/img/services/spotify-logo.png`;
-                    document.getElementById("songUrl").href = `https://youtube.com/results?search_query=${data.data.songData.songName.replace(" ", "+")}+by+${data.data.songData.artists[0].name.replace(" ", "+")}`
-                }
-
-                if (data.playing == false) {
-                    document.getElementById("playPause").className = `fa fa-play`;
-                    document.getElementById("playPause").onclick = playSong
-                }
-                document.getElementById("songData").innerText = `${data.data.songData.songName} by ${data.data.songData.artists[0].name}`;
-                document.getElementById("volume").innerText = `Playing at ${data.data.device.volume}% volume`;
-            } else {
-                console.log(`Uh oh! A fucky wucky popped up! >:3\n${JSON.stringify(data)}`); 
-                document.getElementById("contentString").innerHTML = `<p style="color:red; font-size:25px;">${data.message}</p>`; 
-                document.getElementById("button").style.display = `none`; 
-            }
-        });
     </script>
 </body>
 </html>
-
-<style>
-    body {
-        background-color: black;
-        color:white;
-        text-align:center;
-    }
-
-    button {
-        color:black;
-    }
-
-    ul {
-        list-style:none;
-        text-align:center;
-    }
-</style>

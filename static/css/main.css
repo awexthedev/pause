@@ -1,0 +1,31 @@
+body {
+    background-color: black;
+    color:white;
+    text-align:center;
+}
+
+button {
+    color:black;
+}
+
+ul {
+    list-style:none;
+    text-align:center;
+}
+
+a {
+    color:white;
+}
+
+a:hover {
+    color:gray;
+}
+
+#container {
+    text-align:center;
+    font-size:25px;
+}
+
+.cover {
+    width:22vw
+}

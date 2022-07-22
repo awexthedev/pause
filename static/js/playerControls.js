@@ -1,104 +1,77 @@
-const urlParams = new URLSearchParams(window.location.search);
-const myParam = urlParams.get('trident');
-
-// Skipping x Reversing
-async function skipSong() {
-    if (!myParam || myParam != "fuckyou") {
-        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-        else if (!await checkCookie()) {
-            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
-        }
-    }
-
-    if (message) await sendElectronMessage("skip");
-    if(document.getElementById("volumeContent").value) changeVolume();
-
-    const data = await fetch(`https://api.thatalex.dev/v0/web/spotify/player?action=skipForward`).then(response => response.json());
-    if(data.status == 200) { return document.getElementById("noti").innerHTML = `<p>Skipped song!</p>` }
-    else return document.getElementById("noti").innerHTML = `<p>${data.message}</p>`;
+var box = document.getElementById("notification");
+var base_url = "https://api.thatalex.dev/v1/pause/"
+// var base_url = "http://localhost:8098/v1/pause/"
+var actions = {
+    "state": "player/state",
+    "play": "player?action=play",
+    "pause": "player?action=pause",
+    "skipForward": "player?action=skipForward",
+    "skipBackward": "player?action=skipBackward",
+    "volume": "player?action=volume&value="
 }
 
-async function skipToPrev() {
-    if (!myParam || myParam != "fuckyou") {
-        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-        else if (!await checkCookie()) {
-            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
-        }
-    }
+fetch(base_url + "player/state")
+.then(async function(response) {
+    const data = await response.json();
+    var cover = document.querySelector(".cover");
+    var author = document.querySelector(".author");
+    var playPause = document.getElementById("playPause");
 
-    if (message) await sendElectronMessage("skip");
-    if(document.getElementById("volumeContent").value) changeVolume();
+    if (response.status == 401) location.reload();
+    else if (response.status == 400) {
+        author.innerHTML = "<h3>No active devices here right now..</h3><p>Check back in a few.</p>"
+    } else if (response.status == 200) {
+        console.log(`[HTTP] State API data received, formatting`);
 
-    const data = await fetch(`https://api.thatalex.dev/v0/web/spotify/player?action=skipBackward`).then(response => response.json());
-    if(data.status == 200) {  return document.getElementById("noti").innerHTML = `<p>Skipped song!</p>` }
-    else return document.getElementById("noti").innerHTML = `<p>${data.message}</p>`;
-}
+        if (data.playing) playPause.className = "fa fa-pause"
+        else playPause.className = "fa fa-play";
 
-// Play x Pause
+        playPause.addEventListener('click', (e) => {
+            if (e.target.className == "fa fa-pause") {
+                playerControls('pause', null, document.getElementById("playPause"));
+                playPause.className = 'fa fa-play';
+            }
+            else if (e.target.className == "fa fa-play") {
+                playerControls('play', null, document.getElementById("playPause"));
+                playPause.className = 'fa fa-pause'
+            }
+        })
 
-async function pauseSong() {
-    if (!myParam || myParam != "fuckyou") {
-        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-        else if (!await checkCookie()) {
-            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
-        }
-    }
-
-    if (message) await sendElectronMessage("skip");
-    if(document.getElementById("volumeContent").value) changeVolume();
-
-    fetch("https://api.thatalex.dev/v0/web/spotify/player?action=pause", {
-        method: "get",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).then(async function(resp) {
-        if(resp.status == 204) {
-            const icon = document.getElementById("playPause")
-            icon.className = `fa fa-play`; 
-            icon.onclick = playSong
-            return document.getElementById("noti").innerHTML = `<p>Successfully paused player</p>`;
+        if (data.type == "published") {
+            cover.src = data.data.songData.album.images[0].url
+            author.innerHTML = `<h3><a href="${data.data.songData.url}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
         } else {
-            const d = await resp.json();
-            document.getElementById("noti").innerHTML = `<p>${d.message}</p>`
-        }
-    });
-}
-
-async function playSong() {
-    if (!myParam || myParam != "fuckyou") {
-        if (!document.cookie) document.cookie = `lastRan=${new Date().getTime()}`;
-        else if (!await checkCookie()) {
-            return document.getElementById('noti').innerHTML = '<p>You have already used a player action in the last 5 minutes. Please give me time to regain my sanity :)</p>';
+            cover.src = "https://thatalex.dev/static/spotify.png";
+            author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
         }
     }
+});
 
-    if (message) await sendElectronMessage("skip");
-    if(document.getElementById("volumeContent").value) changeVolume();
+async function playerControls(controller, value, element) {
+    if (controller) {
+        if (!actions[controller]) return console.log(`[Controller] That option isn't in the controller object.`)
+        else {
+            if (controller == "volume") {
+                if (value > 100 || value < 1) {
+                    displayMessage("Sorry, your volume value must be more than 1 or less than 100.",box);
+                    return;
+                } 
+                actions.volume += value
+            }
 
-    fetch("https://api.thatalex.dev/v0/web/spotify/player?action=play", {
-        method: "get",
-        headers: {
-            "Content-Type": "application/json"
+            fetch(base_url + actions[controller])
+            .then(async function (response) {
+                if (response.status == 200 || response.status == 204) {
+                    tempChangeColor("green", element)
+                    console.log('[Controller] Successfully performed action');
+                } else {
+                    tempChangeColor("red", element);
+                    displayMessage("Sorry, something went wrong when contacting the API. Refresh the page and try again.", box);
+                    console.log('[Controller] Something went wrong when performing a ' + controller + ' action.');
+                }
+            })
+
+            actions.volume = "player?action=volume&value="
         }
-    }).then(async function(resp) {
-        if(resp.status == 204) {
-            const icon = document.getElementById("playPause")
-            icon.className = `fa fa-pause`; 
-            icon.onclick = pauseSong
-            return document.getElementById("noti").innerHTML = `<p>Successfully started player</p>`;
-        } else {
-            const d = await resp.json();
-            document.getElementById("noti").innerHTML = `<p>${d.message}</p>`
-        }
-    });
-}
-
-// Changing volume
-async function changeVolume() {
-    const volume = document.getElementById("volumeContent").value;
-    const volumeP = document.getElementById("volume");
-    fetch("https://api.thatalex.dev/v0/web/spotify/player?action=volume&value=" + volume)
-    console.log(`Set volume to ${volume}`)
-    volumeP.innerText = `Playing at ${volume}% volume`
-}
+    } else console.log(`[Controller] Not sure how, but controller was nullified.`)
+} 
