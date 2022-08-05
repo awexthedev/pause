@@ -41,8 +41,23 @@ fetch(base_url + "player/state")
             cover.src = data.data.songData.album.images[0].url
             author.innerHTML = `<h3><a href="${data.data.songData.url}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
         } else {
-            cover.src = "https://thatalex.dev/static/spotify.png";
-            author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+            console.log("[Controller] Song is a local file, checking database for image..")
+            fetch("https://api.thatalex.dev/v1/tools/songs?title=" + data.data.songData.songName, {
+                method: 'get'
+            })
+            .then(async function(response) {
+                if (response.ok) {
+                    console.log("[Controller] API responded with data URI; appending")
+                    let j = await response.json();
+
+                    cover.src = j.data_uri;
+                    author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+                } else {
+                    console.log("[Controller] Cover art does not exist for " + data.data.songData.songName + ". Fetching default cover.")
+                    cover.src = "https://thatalex.dev/static/spotify.png";
+                    author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+                }
+            })
         }
     }
 });

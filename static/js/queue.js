@@ -1,6 +1,6 @@
 var modaln = document.getElementById('modalNoti');
 
-fetch("http://localhost:8098/v1/pause/queue")
+fetch("http://api.thatalex.dev/v1/pause/queue")
 .then (async function(response) {
     if(response.status != 204) {
         var dj = await response.json();
@@ -25,7 +25,7 @@ async function qASong() {
         return;
     }
 
-    fetch(`http://localhost:8098/v1/pause/queue?uri=${uri}`, {
+    fetch(`https://api.thatalex.dev/v1/pause/queue?uri=${uri}`, {
         method: 'post'
     })
     .then(async function(response) {
