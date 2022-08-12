@@ -10,56 +10,68 @@ var actions = {
     "volume": "player?action=volume&value="
 }
 
-fetch(base_url + "player/state")
+fetch(base_url + actions["state"])
 .then(async function(response) {
     const data = await response.json();
-    var cover = document.querySelector(".cover");
-    var author = document.querySelector(".author");
     var playPause = document.getElementById("playPause");
 
-    if (response.status == 401) location.reload();
-    else if (response.status == 400) {
-        author.innerHTML = "<h3>No active devices here right now..</h3><p>Check back in a few.</p>"
-    } else if (response.status == 200) {
-        console.log(`[HTTP] State API data received, formatting`);
+    if (data.playing) playPause.className = "fa fa-pause"
+    else playPause.className = "fa fa-play";
 
-        if (data.playing) playPause.className = "fa fa-pause"
-        else playPause.className = "fa fa-play";
-
-        playPause.addEventListener('click', (e) => {
-            if (e.target.className == "fa fa-pause") {
-                playerControls('pause', null, document.getElementById("playPause"));
-                playPause.className = 'fa fa-play';
-            }
-            else if (e.target.className == "fa fa-play") {
-                playerControls('play', null, document.getElementById("playPause"));
-                playPause.className = 'fa fa-pause'
-            }
-        })
-
-        if (data.type == "published") {
-            cover.src = data.data.songData.album.images[0].url
-            author.innerHTML = `<h3><a href="${data.data.songData.url}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-        } else {
-            console.log("[Controller] Song is a local file, checking database for image..")
-            fetch("https://api.thatalex.dev/v1/tools/songs?title=" + data.data.songData.songName, {
-                method: 'get'
-            })
-            .then(async function(response) {
-                if (response.ok) {
-                    console.log("[Controller] API responded with data URI; appending")
-                    let j = await response.json();
-
-                    cover.src = j.data_uri;
-                    author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-                } else {
-                    console.log("[Controller] Cover art does not exist for " + data.data.songData.songName + ". Fetching default cover.")
-                    cover.src = "https://thatalex.dev/static/spotify.png";
-                    author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-                }
-            })
+    playPause.addEventListener('click', (e) => {
+        if (e.target.className == "fa fa-pause") {
+            playerControls('pause', null, document.getElementById("playPause"));
+            playPause.className = 'fa fa-play';
         }
-    }
+        else if (e.target.className == "fa fa-play") {
+            playerControls('play', null, document.getElementById("playPause"));
+            playPause.className = 'fa fa-pause'
+        }
+    })
+
+    // if (response.status == 401) location.reload();
+    // else if (response.status == 400) {
+    //     author.innerHTML = "<h3>No active devices here right now..</h3><p>Check back in a few.</p>"
+    // } else if (response.status == 200) {
+    //     console.log(`[HTTP] State API data received, formatting`);
+
+    //     if (data.playing) playPause.className = "fa fa-pause"
+    //     else playPause.className = "fa fa-play";
+
+    //     playPause.addEventListener('click', (e) => {
+    //         if (e.target.className == "fa fa-pause") {
+    //             playerControls('pause', null, document.getElementById("playPause"));
+    //             playPause.className = 'fa fa-play';
+    //         }
+    //         else if (e.target.className == "fa fa-play") {
+    //             playerControls('play', null, document.getElementById("playPause"));
+    //             playPause.className = 'fa fa-pause'
+    //         }
+    //     })
+
+    //     if (data.type == "published") {
+    //         cover.src = data.data.songData.album.images[0].url
+    //         author.innerHTML = `<h3><a href="${data.data.songData.url}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+    //     } else {
+    //         console.log("[Controller] Song is a local file, checking database for image..")
+    //         fetch("https://api.thatalex.dev/v1/tools/songs?title=" + data.data.songData.songName, {
+    //             method: 'get'
+    //         })
+    //         .then(async function(response) {
+    //             if (response.ok) {
+    //                 console.log("[Controller] API responded with data URI; appending")
+    //                 let j = await response.json();
+
+    //                 cover.src = j.data_uri;
+    //                 author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+    //             } else {
+    //                 console.log("[Controller] Cover art does not exist for " + data.data.songData.songName + ". Fetching default cover.")
+    //                 cover.src = "https://thatalex.dev/static/spotify.png";
+    //                 author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
+    //             }
+    //         })
+    //     }
+    // }
 });
 
 async function playerControls(controller, value, element) {
