@@ -46,7 +46,8 @@ var divs = {
     "skipBackward": document.getElementById("backward"),
     "repeat": document.getElementById("repeat-icon"),
     "shuffle": document.getElementById("shuffle-icon"),
-    "notification": document.getElementById("notification")
+    "notification": document.getElementById("notification"),
+    "message": document.getElementById("messageContent")
 }
 
 fetch(base_url + actions["state"].path)
@@ -127,6 +128,16 @@ async function playerControls(controller, value, element) {
                     if (controller != "repeat" && controller != "shuffle") {
                         tempChangeColor("green", element);
                     }
+
+                    if (divs.message.value) {
+                        console.log('[ws] Message detected, emitting to backend')
+                        socket.emit("message sent", {
+                            message: divs.message.value,
+                            action: controller
+                        });
+
+                        divs.message.value = "";
+                    } else console.log("[ws] No message provided, ignoring socket emit")
                 } 
             })
         }
