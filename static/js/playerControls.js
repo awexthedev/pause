@@ -1,104 +1,134 @@
-var box = document.getElementById("notification");
 var base_url = "https://api.thatalex.dev/v1/pause/"
 // var base_url = "http://localhost:8098/v1/pause/"
+
 var actions = {
-    "state": "player/state",
-    "play": "player?action=play",
-    "pause": "player?action=pause",
-    "skipForward": "player?action=skipForward",
-    "skipBackward": "player?action=skipBackward",
-    "volume": "player?action=volume&value="
+    "state": {
+        "path": "player/state",
+        "method": "get"
+    },
+    "play": {
+        "path": "player?action=play",
+        "method": "post"
+    },
+    "pause": {
+        "path": "player?action=pause",
+        "method": "post"
+    },
+    "skipForward": {
+        "path": "player?action=skipForward",
+        "method": "post"
+    },
+    "skipBackward": {
+        "path": "player?action=skipBackward",
+        "method": "post"
+    },
+    "volume": {
+        "path": "player?action=volume",
+        "method": "post",
+        "expectedQueryValue": "volume_percent"
+    },
+    "repeat": {
+        "path": "player?action=repeat",
+        "method": "post",
+        "expectedQueryValue": "state"
+    },
+    "shuffle": {
+        "path": "player?action=shuffle",
+        "method": "post",
+        "expectedQueryValue": "state"
+    }
 }
 
-fetch(base_url + actions["state"])
+var divs = {
+    "playPause": document.getElementById("playPause"),
+    "volume": document.getElementById("volumeContent"),
+    "skipForward": document.getElementById("forward"),
+    "skipBackward": document.getElementById("backward"),
+    "repeat": document.getElementById("repeat-icon"),
+    "shuffle": document.getElementById("shuffle-icon"),
+    "notification": document.getElementById("notification")
+}
+
+fetch(base_url + actions["state"].path)
 .then(async function(response) {
     const data = await response.json();
-    var playPause = document.getElementById("playPause");
+    if (response.status == 200) {
+        console.log('[Events] API responded to player state request!')
+        var playPause = document.getElementById("playPause");
 
-    if (data.playing) playPause.className = "fa fa-pause"
-    else playPause.className = "fa fa-play";
+        if (data.playing) playPause.className = "fa fa-pause"
+        else playPause.className = "fa fa-play";
 
-    playPause.addEventListener('click', (e) => {
-        if (e.target.className == "fa fa-pause") {
-            playerControls('pause', null, document.getElementById("playPause"));
-            playPause.className = 'fa fa-play';
-        }
-        else if (e.target.className == "fa fa-play") {
-            playerControls('play', null, document.getElementById("playPause"));
-            playPause.className = 'fa fa-pause'
-        }
-    })
+        if (data.data.shuffle) divs.shuffle.style.color = "green";
+        if (data.data.repeat != "off") divs.repeat.style.color = "green";
+    
+        playPause.addEventListener('click', (e) => {
+            if (e.target.className == "fa fa-pause") {
+                playerControls('pause', null, document.getElementById("playPause"));
+                playPause.className = 'fa fa-play';
+            }
+            else if (e.target.className == "fa fa-play") {
+                playerControls('play', null, document.getElementById("playPause"));
+                playPause.className = 'fa fa-pause'
+            }
+        })
 
-    // if (response.status == 401) location.reload();
-    // else if (response.status == 400) {
-    //     author.innerHTML = "<h3>No active devices here right now..</h3><p>Check back in a few.</p>"
-    // } else if (response.status == 200) {
-    //     console.log(`[HTTP] State API data received, formatting`);
+        divs.repeat.addEventListener("click", (e) => {
+            console.log("[Events] Detected click on repeat element, attempting to update state..")
+            if (divs.repeat.style.color == "green") {
+                divs.repeat.style.color = "white";
+                playerControls("repeat", "off", divs.repeat);
+            } else if (divs.repeat.style.color == "white" || divs.repeat.style.color == "") {
+                divs.repeat.style.color = "green";
+                playerControls("repeat", "track", divs.repeat);
+            } 
+        })
 
-    //     if (data.playing) playPause.className = "fa fa-pause"
-    //     else playPause.className = "fa fa-play";
-
-    //     playPause.addEventListener('click', (e) => {
-    //         if (e.target.className == "fa fa-pause") {
-    //             playerControls('pause', null, document.getElementById("playPause"));
-    //             playPause.className = 'fa fa-play';
-    //         }
-    //         else if (e.target.className == "fa fa-play") {
-    //             playerControls('play', null, document.getElementById("playPause"));
-    //             playPause.className = 'fa fa-pause'
-    //         }
-    //     })
-
-    //     if (data.type == "published") {
-    //         cover.src = data.data.songData.album.images[0].url
-    //         author.innerHTML = `<h3><a href="${data.data.songData.url}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-    //     } else {
-    //         console.log("[Controller] Song is a local file, checking database for image..")
-    //         fetch("https://api.thatalex.dev/v1/tools/songs?title=" + data.data.songData.songName, {
-    //             method: 'get'
-    //         })
-    //         .then(async function(response) {
-    //             if (response.ok) {
-    //                 console.log("[Controller] API responded with data URI; appending")
-    //                 let j = await response.json();
-
-    //                 cover.src = j.data_uri;
-    //                 author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-    //             } else {
-    //                 console.log("[Controller] Cover art does not exist for " + data.data.songData.songName + ". Fetching default cover.")
-    //                 cover.src = "https://thatalex.dev/static/spotify.png";
-    //                 author.innerHTML = `<h3><a href="https://youtube.com/results?search_query=${data.data.songData.songName} by ${data.data.songData.artists[0].name}" target="_blank">${data.data.songData.songName} by ${data.data.songData.artists[0].name}</a></h3>`
-    //             }
-    //         })
-    //     }
-    // }
+        divs.shuffle.addEventListener("click", (e) => {
+            console.log("[Events] Detected click on shuffle element, attempting to update state..")
+            if (divs.shuffle.style.color == "green") {
+                divs.shuffle.style.color = "white";
+                playerControls("shuffle", "false", divs.shuffle);
+            } else if (divs.shuffle.style.color == "white" || divs.shuffle.style.color == "") {
+                divs.shuffle.style.color = "green";
+                playerControls("shuffle", "true", divs.shuffle);
+            } 
+        })
+    } else {
+        console.log(`[Events] that can't be good. Backend has returned a ${response.status} to the onload-state check, is the API online & authenticated?`)
+        Object.values(divs).forEach(function(k) {
+            k.style.color = "red"
+            k.onclick = null;
+            document.getElementById("notification").innerText = "Received an unexpected error from the backend! Let the developer know this is happening."
+        })
+    }
 });
 
 async function playerControls(controller, value, element) {
     if (controller) {
-        if (!actions[controller]) return console.log(`[Controller] That option isn't in the controller object.`)
+        if (!actions[controller]) return console.log("[Controller] That controller doesn't exist on the API.")
         else {
+            if (actions[controller].expectedQueryValue) queryString = "&" + actions[controller].expectedQueryValue + "=" + value
+            else queryString = ""
+
             if (controller == "volume") {
                 if (value > 100 || value < 1) {
-                    displayMessage("Sorry, your volume value must be more than 1 or less than 100.",box);
+                    displayMessage("You provided a number that was too large or too small.", divs.notification);
                     return;
-                } 
-                actions.volume += value
-            }
-
-            fetch(base_url + actions[controller])
-            .then(async function (response) {
-                if (response.status == 200 || response.status == 204) {
-                    tempChangeColor("green", element)
-                    console.log('[Controller] Successfully performed action');
-                } else {
-                    tempChangeColor("red", element);
-                    displayMessage("Sorry, something went wrong when contacting the API. Refresh the page and try again.", box);
-                    console.log('[Controller] Something went wrong when performing a ' + controller + ' action.');
                 }
-            })
+            } 
 
-            actions.volume = "player?action=volume&value="
+            fetch(base_url + actions[controller].path + queryString, {
+                method: actions[controller].method
+            })
+            .then(function (response) {
+                if (response.status == 200 || response.status == 204) {
+                    console.log(`[Controller] Successfully executed ${controller} function`)
+                    if (controller != "repeat" && controller != "shuffle") {
+                        tempChangeColor("green", element);
+                    }
+                } 
+            })
         }
-    } else console.log(`[Controller] Not sure how, but controller was nullified.`)
+    } else console.log(`[Controller] Unsure how, but the controller variable was nullified?`)
 } 

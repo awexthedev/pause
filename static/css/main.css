@@ -26,6 +26,11 @@ a:hover {
     font-size:25px;
 }
 
-.cover {
-    width:22vw
+#player-frame::-webkit-scrollbar {
+    display:none;
+}
+
+#player-frame {
+    -ms-overflow-style:none;
+    scrollbar-width:none;
 }

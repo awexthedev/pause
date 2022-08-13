@@ -44,12 +44,14 @@
         <hr width="50%">
     <div id="container">
         <div id="player">
-            <!-- <img class="cover"></div>
-            <div class="author"></div> -->
-            <iframe id="player-frame" src="https://thatalex.dev/spotify" height="270" frameBorder="0" style="color:white;"></iframe>
+            <iframe id="player-frame" src="https://thatalex.dev/spotify" height="320" frameBorder="0" style="color:white;"></iframe>
         </div>
 
         <div id="controller">
+            <!-- indicators -->
+            <i id="repeat-icon" class="fa fa-repeat" aria-hidden="true"></i>
+            <i id="shuffle-icon" class="fa fa-random" aria-hidden="true"></i>
+
             <div id="buttons">
                 <i id="backward" onclick="playerControls('skipBackward', null, this)" class="fa fa-step-backward" style="font-size:25px; padding-right:10px;" aria-hidden="true"></i> 
                 <i id="playPause" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
@@ -63,7 +65,8 @@
         </div>
     </div>
 
-    <p>Content is loaded from Spotify or local files.<br>All Rights Reserved to respective artists/labels.</p>
+    <p>Content is loaded from Spotify or local files.<br>All Rights Reserved to respective artists/labels.<br>
+    <a href="https://github.com/zevhr/pause" target="_blank">GitHub</a> -- <a href="mailto:alex@zephstreams.live" target="_blank">Email</a></p>
 
     <script src="static/js/popup.js"></script>
     <script src="static/js/playerControls.js"></script>
