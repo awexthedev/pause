@@ -47,7 +47,8 @@ var divs = {
     "repeat": document.getElementById("repeat-icon"),
     "shuffle": document.getElementById("shuffle-icon"),
     "notification": document.getElementById("notification"),
-    "message": document.getElementById("messageContent")
+    "message": document.getElementById("messageContent"),
+    "range": document.getElementById("myRange")
 }
 
 fetch(base_url + actions["state"].path)
@@ -94,6 +95,13 @@ fetch(base_url + actions["state"].path)
                 divs.shuffle.style.color = "green";
                 playerControls("shuffle", "true", divs.shuffle);
             } 
+        })
+
+        // slider.value = data.data.device.volume;
+        divs.range.value = data.data.device.volume;
+        
+        divs.range.addEventListener("mouseup", () => {
+            playerControls("volume", divs.range.value, divs.range);
         })
     } else {
         console.log(`[Events] that can't be good. Backend has returned a ${response.status} to the onload-state check, is the API online & authenticated?`)

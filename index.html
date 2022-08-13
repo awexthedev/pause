@@ -57,9 +57,14 @@
                 <i id="playPause" class="fa fa-pause" style="font-size:25px;" aria-hidden="true"></i> 
                 <i id="forward" onclick="playerControls('skipForward', null, this)" class="fa fa-step-forward" style="font-size:25px; padding-left:10px;" aria-hidden="true"></i><br>
                 <br>
-                <!-- <input type="text" style="color:black;" id="volumeContent" placeholder="Change volume? (0-100)"><br> -->
+
+                <!-- volume slider & message box -->
+                <div id="container2">
+                    <div class="slidecontainer">
+                        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                    </div>
+                </div>
                 <input type="text" style="color:black;" id="messageContent" placeholder="Attach a message?"><br>
-                <!-- <i class="fa fa-check" onclick="playerControls('volume', document.getElementById('volumeContent').value, this)" style="font-size:25px; padding-top:10px;" aria-hidden="true"></i><br> -->
                 <span style="font-size:20px;" id="notification"></span>
                 <hr width="50">
             </div>
@@ -81,11 +86,6 @@
         gtag('js', new Date());
 
         gtag('config', 'G-XCS1ZHK3ZM');
-    </script>
-    <script>
-        if (window.innerHeight < 720 || window.innerWidth < 1280) {
-            document.getElementById("volumeContent").style.width = "50%";
-        }
     </script>
 </body>
 </html>
