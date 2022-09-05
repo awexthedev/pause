@@ -87,7 +87,7 @@ export class PlayerControls extends React.Component {
                     </i>
                     <i id="shuffle-icon"
                        className="fa fa-random"
-                       style={ this.props.d && parseInt(this.props.d.artist.shuffle) !== 0 ? this.style = { color: 'green', paddingRight: '5px' } : this.style = { color: 'white', paddingRight: '5px' } }
+                       style={ this.props.d && this.props.d.artist.shuffle !== "false" ? this.style = { color: 'green', paddingRight: '5px' } : this.style = { color: 'white', paddingRight: '5px' } }
                        aria-hidden="true"
                        onClick={() => this.handleClicks("shuffle")}
                     >
