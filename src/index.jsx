@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 
 // components
 import { Header } from './components/Header'
-import { Player } from './components/Player'
+import { Player, PlayerControls } from './components/Player'
 
 // services
 import { socket } from './services/socket'
@@ -27,6 +27,7 @@ function App() {
         <div>
             <Header />
             <Player d={response} />
+            <PlayerControls d={response} active={ response ? "true" : "false" } />
         </div>
     )
 }
