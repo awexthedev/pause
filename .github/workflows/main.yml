@@ -6,12 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
+      uses: D3rHase/ssh-command-action@v0.2.1
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        script: |
-          cd pause
-          ./deploy.sh
+        HOST: ${{ secrets.HOST }}
+        USER: ${{ secrets.USERNAME }}
+        PRIVATE_SSH_KEY: ${{ secrets.KEY }}
+        PORT: ${{ secrets.PORT }}
+        COMMAND: "cd pause && ./deploy.sh"
