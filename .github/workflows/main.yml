@@ -13,4 +13,5 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          ls
+          cd pause
+          ./deploy.sh
