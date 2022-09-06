@@ -1,14 +1,15 @@
 import React from 'react';
-let base_url = "https://api.zephmakes.tech/v1/pause/"
+// let base_url = "https://api.zephmakes.tech/v1/pause/"
+let base_url = "http://localhost:8098/v1/pause/"
 
 export class Player extends React.Component {
     render() {
         return (
             <div id="container">
                 <div className={"player"}>
-                    <span className={"player songinfo"}>
+                    <span className={"songinfo"}>
                         { this.props.d ? <img alt={"bad"} width={"150vw"} src={this.props.d.artist.cover} /> : <p>bad</p>}
-                        { this.props.d ? <React.Fragment><p>{this.props.d.artist.title}</p><p>{this.props.d.position} \\ {this.props.d.artist.duration}</p></React.Fragment> : <p>Uh oh! Something went wrong.</p>}
+                        { this.props.d ? <React.Fragment><p>{this.props.d.artist.title}</p><p>{this.props.d.artist.position} \\ {this.props.d.artist.duration}</p></React.Fragment> : <p>Uh oh! Something went wrong.</p>}
                     </span>
                 </div>
             </div>
@@ -70,6 +71,10 @@ export class PlayerControls extends React.Component {
                 .catch(function(err) {
                     console.log("[Controller] Something went terribly wrong. Status code " + err.status + " returned from backend.")
                 })
+
+            // console.log(this.props.d)
+            if (i === "play") this.props.d.artist.state = "play"
+            if (i === "pause") this.props.d.artist.state = "pause"
         } else console.log(`[Controller] No socket event is stored, aborting click event`)
     }
 
@@ -90,6 +95,28 @@ export class PlayerControls extends React.Component {
                        style={ this.props.d && this.props.d.artist.shuffle !== "false" ? this.style = { color: 'green', paddingRight: '5px' } : this.style = { color: 'white', paddingRight: '5px' } }
                        aria-hidden="true"
                        onClick={() => this.handleClicks("shuffle")}
+                    >
+                    </i>
+                    <br />
+                    <i id="skip-backwards"
+                       className={"fa fa-step-backward"}
+                       style={{ color: "white", paddingRight: '10px' }}
+                       aria-hidden={"true"}
+                       onClick={() => this.handleClicks("skipBackward")}
+                    >
+                    </i>
+                    <i id="play-pause"
+                       className={this.props.d && this.props.d.artist.state === "pause" ? "fa fa-pause" : "fa fa-play"}
+                       style={{ color: "white", paddingRight: '10px' }}
+                       aria-hidden={"true"}
+                       onClick={() => { this.props.d && this.props.d.artist.state === "pause" ? this.handleClicks("pause") : this.handleClicks("play")}}
+                    >
+                    </i>
+                    <i id="skip-forwards"
+                       className={"fa fa-step-forward"}
+                       style={{ color: "white", paddingRight: '5px' }}
+                       aria-hidden={"true"}
+                       onClick={() => this.handleClicks("skipForward")}
                     >
                     </i>
                 </div>
