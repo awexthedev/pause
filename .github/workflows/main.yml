@@ -12,4 +12,4 @@ jobs:
         USER: ${{ secrets.USERNAME }}
         PRIVATE_SSH_KEY: ${{ secrets.KEY }}
         PORT: ${{ secrets.PORT }}
-        COMMAND: "cd pause && ./deploy.sh"
+        COMMAND: "PATH=$PATH:/${{secrets.USERNAME}}/.npm-global/bin && pm2 restart pausenext"
