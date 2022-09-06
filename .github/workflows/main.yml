@@ -6,10 +6,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
-      uses: D3rHase/ssh-command-action@v0.2.1
+      uses: appleboy/ssh-action@master
       with:
-        HOST: ${{ secrets.HOST }}
-        USER: ${{ secrets.USERNAME }}
-        PRIVATE_SSH_KEY: ${{ secrets.KEY }}
-        PORT: ${{ secrets.PORT }}
-        COMMAND: "PATH=$PATH:/${{secrets.USERNAME}}/.npm-global/bin && pm2 restart pausenext"
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          PATH=$PATH:/${{secrets.USERNAME}}/.npm-global/bin
+          pm2 -v
+          pm2 restart pausenext
