@@ -13,6 +13,6 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          PATH=$PATH:/${{secrets.USERNAME}}/.npm-global/bin
+          PATH=$PATH:/${{secrets.USERNAME}}/.nvm/versions/node/v18.8.0/bin
           pm2 -v
           pm2 restart pausenext
