@@ -1,0 +1,8 @@
+{
+  "short_name": "Pause!",
+  "name": "Pause my music, all from this one website",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000f54",
+  "background_color": "#000000"
+}
