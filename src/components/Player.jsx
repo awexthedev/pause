@@ -1,6 +1,6 @@
 import React from 'react';
-// let base_url = "https://api.zephmakes.tech/v1/pause/"
-let base_url = "http://localhost:8098/v1/pause/"
+let base_url = "https://api.zephmakes.tech/v1/pause/"
+// let base_url = "http://localhost:8098/v1/pause/"
 
 export class Player extends React.Component {
     render() {
