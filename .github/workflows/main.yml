@@ -15,4 +15,4 @@ jobs:
         script: |
           PATH=$PATH:/${{secrets.USERNAME}}/.nvm/versions/node/v18.8.0/bin
           pm2 -v
-          pm2 restart pause
+          pm2 restart pausenext
