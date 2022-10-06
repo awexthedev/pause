@@ -1,9 +1,10 @@
 import React from 'react';
+import {checkState} from '../helpers/isdev';
 
-// let base_url=""
-// if (checkState() === "development") base_url="http://localhost:8098/v2/pause/"
-// else base_url = "https://api.zephmakes.tech/v2/pause/"
-let base_url = "https://api.zephmakes.tech/v2/pause/"
+let base_url=""
+if (checkState() === "development") base_url="http://localhost:8098/v2/pause/"
+else base_url = "https://api.zephmakes.tech/v2/pause/"
+// let base_url = "https://api.zephmakes.tech/v2/pause/"
 
 export class Player extends React.Component {
     render() {
