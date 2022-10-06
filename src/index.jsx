@@ -1,13 +1,13 @@
 import React from 'react';
-import ReactDom from 'react-dom';
+import ReactDom from 'react-dom/client';
 
 // components
 import { Header } from './components/Header'
 import { Player, PlayerControls } from './components/Player'
 import { Footer } from './components/Footer'
 
-// services
-import { socket } from './services/socket'
+// helpers
+import { socket } from './helpers/socket'
 
 // styling
 import './main.css'
@@ -19,7 +19,7 @@ function App() {
         socket.on('connect', () => {
             socket.emit("spotify_status", "listen");
             socket.on("api_update", async (message) => {
-                await setResponse(message)
+                if (message) await setResponse(message)
             })
         })
     })
@@ -35,4 +35,5 @@ function App() {
     )
 }
 
-ReactDom.render(<App />, document.getElementById("root"))
+const root = ReactDom.createRoot(document.getElementById("root"));
+root.render(<App />);
