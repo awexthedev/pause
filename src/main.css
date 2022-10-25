@@ -48,8 +48,14 @@ a:hover, a:hover:visited {
 
 #controls {
     color:white;
+}
+
+button {
+    color:black;
+}
+
+#controls i {
     font-size:30px;
-    padding:10px 0;
 }
 
 #footer {
