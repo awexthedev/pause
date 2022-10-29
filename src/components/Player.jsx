@@ -14,7 +14,7 @@ export class Player extends React.Component {
             userSetVolume: null
         }
 
-        socket.emit("spotify_status", "listen");
+        socket.emit("spotify", {"event":"listen"});
         socket.on("api_update", async (message) => {
             if (message) await this.setState({ d: message })
         })
@@ -23,17 +23,7 @@ export class Player extends React.Component {
     async handleClicks(i) {
         if (this.state.d) {
             console.log(`[Controller] Received '${i}' event, executing`)
-
-            fetch(base_url + "player?action=" + i, {
-                method: "post"
-            })
-                .then(function(response) {
-                    if (response.ok) console.log("[Controller] Event succeeded!")
-                    else console.log("[Controller] Received status code " + response.status + " when querying backend, unsure if request succeeded?")
-                })
-                .catch(function(err) {
-                    console.log("[Controller] Something went terribly wrong. Status code " + err.status + " returned from backend.")
-                })
+            socket.emit("spotify", {"event":"event","value":i});
         } else console.log(`[Controller] No socket event is stored, aborting click event`)
     }
 
@@ -93,7 +83,7 @@ export class Player extends React.Component {
                         defaultValue={this.state.d ? this.state.d.VOLUME : this.state.userSetVolume}
                         onChange={event => {
                             this.setState({ userSetVolume: event.target.valueAsNumber })
-                            socket.emit("spotify_event", {"event":"SETVOLUME","value":event.target.valueAsNumber})
+                            socket.emit("spotify", {"event":"event","value":"SETVOLUME","num":event.target.valueAsNumber})
                         }}
                     />
                     <input
@@ -107,7 +97,7 @@ export class Player extends React.Component {
                     <button
                         type={"button"}
                         onClick={() => {
-                            if (document.getElementById("textbox").value) socket.emit("spotify_event", {"event":"NOTIFICATION","value":document.getElementById("textbox").value})
+                            if (document.getElementById("textbox").value) socket.emit("spotify", {"event":"event","value":"NOTIFICATION","notification":document.getElementById("textbox").value})
                         }}
                     >Submit</button>
                 </div>
