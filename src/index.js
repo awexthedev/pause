@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom/client';
 
 // components
-import { Header } from './components/Header'
-import { Player } from './components/Player'
-import { Footer } from './components/Footer'
+import {Header,Player,Footer} from './Components'
 
 // styling
 import './main.css'
